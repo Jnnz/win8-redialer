@@ -17,4 +17,4 @@ Microsoft has removed the redial options from the dial up connection settings in
 
 ### Screenshot:
 
-![Redialer](https://sites.google.com/a/ankitsharma.info/main/_/rsrc/1388676162756/softwares/windows8-redialer/Win8-Redialer.png)
+![Redialer](https://raw.githubusercontent.com/jnnrz/redialer/master/Screenshots/screen.jpg)
