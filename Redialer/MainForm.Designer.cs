@@ -48,6 +48,9 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.saveButton = new System.Windows.Forms.Button();
             this.chkHosted = new System.Windows.Forms.CheckBox();
+            this.nudRetry = new System.Windows.Forms.NumericUpDown();
+            this.lbRetry = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRetry)).BeginInit();
             this.SuspendLayout();
             // 
             // detectedList
@@ -252,11 +255,34 @@
             this.chkHosted.UseVisualStyleBackColor = true;
             this.chkHosted.CheckedChanged += new System.EventHandler(this.chkHosted_CheckedChanged);
             // 
+            // nudRetry
+            // 
+            this.nudRetry.Location = new System.Drawing.Point(286, 198);
+            this.nudRetry.Name = "nudRetry";
+            this.nudRetry.Size = new System.Drawing.Size(80, 22);
+            this.nudRetry.TabIndex = 16;
+            this.nudRetry.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // lbRetry
+            // 
+            this.lbRetry.AutoSize = true;
+            this.lbRetry.Location = new System.Drawing.Point(283, 179);
+            this.lbRetry.Name = "lbRetry";
+            this.lbRetry.Size = new System.Drawing.Size(36, 13);
+            this.lbRetry.TabIndex = 17;
+            this.lbRetry.Text = "Retry:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(376, 399);
+            this.Controls.Add(this.lbRetry);
+            this.Controls.Add(this.nudRetry);
             this.Controls.Add(this.chkHosted);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.txtPassword);
@@ -283,6 +309,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
+            ((System.ComponentModel.ISupportInitialize)(this.nudRetry)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -308,6 +335,8 @@
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.CheckBox chkHosted;
+        private System.Windows.Forms.NumericUpDown nudRetry;
+        private System.Windows.Forms.Label lbRetry;
     }
 }
 

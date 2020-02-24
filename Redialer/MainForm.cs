@@ -180,11 +180,18 @@ namespace Redialer
         }
         public void connect()
         {
-
+            var retrySeconds = Decimal.ToInt32(nudRetry.Value);
         retry:
 
             try
             {
+                if (retrySeconds < 1)
+                {
+                    appendLog("Retry time needs to be > 0");
+                    Stop();
+                    return;
+                }
+
                 if (!_shouldStop)
                 {
                     using (RasDialer dialer = new RasDialer())
@@ -208,8 +215,8 @@ namespace Redialer
             catch (Exception er)
             {
                 appendLog(er.Message);
-                appendLog("Trying in 10 secs...");
-                Thread.Sleep(1000 * 10);
+                appendLog("Trying in " + retrySeconds + " secs...");
+                Thread.Sleep(1000 * retrySeconds);
                 goto retry;
             }
         }
@@ -325,7 +332,6 @@ namespace Redialer
 
         private void aboutButton_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Created By: Ankit Sharma" + Environment.NewLine + "Download available at: http://www.ankitsharma.info" + Environment.NewLine + "For your suggestions & bug reports email at ankit@ankitsharma.info", "About Win8 Redialer", MessageBoxButtons.OK);
             About about = new About();
             about.ShowDialog();
         }
