@@ -89,7 +89,6 @@
             this.txtStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtStatus.Size = new System.Drawing.Size(355, 64);
             this.txtStatus.TabIndex = 4;
-            this.txtStatus.TextChanged += new System.EventHandler(this.txtStatus_TextChanged);
             // 
             // notifyIcon
             // 
