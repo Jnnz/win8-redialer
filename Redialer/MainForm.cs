@@ -29,7 +29,7 @@ namespace Redialer
             MainForm.CheckForIllegalCrossThreadCalls = false;
 
             //load config file
-            PersistentSettings.Instance.Load("win8redialer.config");
+            PersistentSettings.Instance.Load("redialer.config");
             chkAutoStart.Checked = bool.Parse(PersistentSettings.Instance.GetValue("AutoStart", "false"));
             chkAutoDial.Checked = bool.Parse(PersistentSettings.Instance.GetValue("AutoDial", "false"));
             chkNoBytes.Checked = bool.Parse(PersistentSettings.Instance.GetValue("NoBytes", "false"));
@@ -91,15 +91,7 @@ namespace Redialer
                 startButton_Click(sender, e);
             }
         }
-        public void checkUpdate()
-        {
-            VersionHelper versionHelper = new VersionHelper();
-            if (versionHelper.CheckForNewVersion())
-            {
-                if (MessageBox.Show("New Version of Windows 8 Redialer is Available. Download?", "Update", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    versionHelper.DownloadNewVersion();
-            }
-        }
+
         public void appendLog(string str)
         {
             if (txtStatus.Text == "")
@@ -122,7 +114,7 @@ namespace Redialer
             {
                 try
                 {
-                    appendLog("Win8 Redialer Started...");
+                    appendLog("Redialer Started...");
                     startButton.Enabled = false;
                     stopButton.Enabled = true;
 
@@ -266,7 +258,7 @@ namespace Redialer
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-            appendLog("Win8 Redialer Stopped...");
+            appendLog("Redialer Stopped...");
             startButton.Enabled = true;
             stopButton.Enabled = false;
             Stop();
@@ -313,8 +305,6 @@ namespace Redialer
                                 appendLog("No Bytes. Disconnecting...");
                                 r.HangUp();
                             }
-
-                            //tcp.EndConnect(ar);
                         }
                         finally
                         {
@@ -325,29 +315,19 @@ namespace Redialer
             }
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void aboutButton_Click(object sender, EventArgs e)
         {
             About about = new About();
             about.ShowDialog();
         }
 
-        private void txtStatus_TextChanged(object sender, EventArgs e)
-        {
-            //File.WriteAllText("log.txt", txtStatus.Text);
-        }
-
         private void chkAutoStart_CheckedChanged(object sender, EventArgs e)
         {
             RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             if (chkAutoStart.Checked == true)
-                rkApp.SetValue("Win8 Redialer", Application.ExecutablePath.ToString());
+                rkApp.SetValue("Redialer", Application.ExecutablePath.ToString());
             else
-                rkApp.DeleteValue("Win8 Redialer", false);
+                rkApp.DeleteValue("Redialer", false);
 
             PersistentSettings.Instance.SetValue("AutoStart", chkAutoStart.Checked.ToString());
             PersistentSettings.Instance.Save();
@@ -381,7 +361,7 @@ namespace Redialer
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var result = MessageBox.Show("Are you sure you want to exit the application?", "Exit Win8 Redialer?",
+            var result = MessageBox.Show("Are you sure you want to exit the application?", "Exit Redialer?",
                              MessageBoxButtons.YesNo,
                              MessageBoxIcon.Question);
 

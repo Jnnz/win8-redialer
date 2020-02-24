@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Redialer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Johann Perozo")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Redialer")]
 [assembly: AssemblyCopyright("Copyright ©  2013-14 Ankit Sharma, 2020 Johann Perozo")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.13")]
-[assembly: AssemblyFileVersion("1.13")]
+[assembly: AssemblyVersion("1.13.1")]
+[assembly: AssemblyFileVersion("1.13.1")]

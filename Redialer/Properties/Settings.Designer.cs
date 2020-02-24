@@ -25,7 +25,7 @@ namespace Redialer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.13.0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.13.1")]
         public string Version {
             get {
                 return ((string)(this["Version"]));
