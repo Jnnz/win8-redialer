@@ -1,3 +1,0 @@
-D:\code\redialer\Redialer\bin\Debug\Win8 Redialer.exe.config
-D:\code\redialer\Redialer\obj\Debug\Win8 Redialer.exe
-D:\code\redialer\Redialer\obj\Debug\Win8 Redialer.pdb
