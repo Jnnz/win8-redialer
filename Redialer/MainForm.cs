@@ -1,37 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using DotRas;
-using System.Collections.ObjectModel;
 using System.Net.Sockets;
 using System.IO;
 using System.Diagnostics;
-using Win8Redialer;
 using Microsoft.Win32;
 using System.Threading;
+
 namespace Win8Redialer
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1()
+        private RasConnectionWatcher watcher;
+        private Thread oThread;
+        private volatile bool _shouldStop;
+        private int[] isPPPOE;
+
+        public MainForm()
         {
             InitializeComponent();
         }
-        RasConnectionWatcher watcher;
-        Thread oThread;
-        private volatile bool _shouldStop;
-        int[] isPPPOE;
-        private void Form1_Load(object sender, EventArgs e)
+
+        private void MainForm_Load(object sender, EventArgs e)
         {
             //declarations
             RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\RAS AutoDial\\Default\\", true);
             watcher = new RasConnectionWatcher();
-            Form1.CheckForIllegalCrossThreadCalls = false;
+            MainForm.CheckForIllegalCrossThreadCalls = false;
 
             //load config file
             PersistentSettings.Instance.Load("win8redialer.config");
@@ -40,7 +35,7 @@ namespace Win8Redialer
             chkNoBytes.Checked = bool.Parse(PersistentSettings.Instance.GetValue("NoBytes", "false"));
             chkHosted.Checked = bool.Parse(PersistentSettings.Instance.GetValue("RestartHostedNetwork", "false"));
 
-            txtUserName.Text = PersistentSettings.Instance.GetValue("Username","" );
+            txtUserName.Text = PersistentSettings.Instance.GetValue("Username", "");
             txtPassword.Text = PersistentSettings.Instance.GetValue("Password", "");
 
             // get list of connections
@@ -49,7 +44,7 @@ namespace Win8Redialer
                 RasPhoneBook pbk = new RasPhoneBook();
                 pbk.Open(RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User));
                 isPPPOE = new int[pbk.Entries.Count];
-                int i=0;
+                int i = 0;
                 foreach (RasEntry entry in pbk.Entries)
                 {
                     if (entry.DialMode == DotRas.RasDialMode.None)
@@ -58,7 +53,7 @@ namespace Win8Redialer
                         isPPPOE[i] = 0;
 
                     i++;
-                    listBox1.Items.Add(entry.Name);
+                    detectedList.Items.Add(entry.Name);
                 }
             }
             catch (Exception er)
@@ -69,13 +64,13 @@ namespace Win8Redialer
             //detect default connection
             try
             {
-                for (int i = 0; i < listBox1.Items.Count; i++)
+                for (int i = 0; i < detectedList.Items.Count; i++)
                 {
                     if (rkApp != null)
                     {
-                        if (listBox1.Items[i].ToString() == rkApp.GetValue("DefaultInternet").ToString())
+                        if (detectedList.Items[i].ToString() == rkApp.GetValue("DefaultInternet").ToString())
                         {
-                            listBox1.SelectedIndex = i;
+                            detectedList.SelectedIndex = i;
                             break;
                         }
                     }
@@ -93,7 +88,7 @@ namespace Win8Redialer
             //Auto dial
             if (chkAutoDial.Checked == true)
             {
-                button1_Click(sender, e);
+                startButton_Click(sender, e);
             }
         }
         public void checkUpdate()
@@ -107,7 +102,7 @@ namespace Win8Redialer
         }
         public void appendLog(string str)
         {
-            if (txtStatus.Text =="")
+            if (txtStatus.Text == "")
                 txtStatus.AppendText("[" + DateTime.Now.ToString() + "]:" + str);
             else
                 txtStatus.AppendText(Environment.NewLine + "[" + DateTime.Now.ToString() + "]:" + str);
@@ -117,9 +112,9 @@ namespace Win8Redialer
                 sw.WriteLine("[" + DateTime.Now.ToString() + "]:" + str);
             }
         }
-        public void button1_Click(object sender, EventArgs e)
+        public void startButton_Click(object sender, EventArgs e)
         {
-            if (listBox1.SelectedIndex == -1)
+            if (detectedList.SelectedIndex == -1)
             {
                 appendLog("Select a connection...");
             }
@@ -128,12 +123,12 @@ namespace Win8Redialer
                 try
                 {
                     appendLog("Win8 Redialer Started...");
-                    button1.Enabled = false;
-                    button2.Enabled = true;
+                    startButton.Enabled = false;
+                    stopButton.Enabled = true;
 
                     Begin();
 
-                    RasConnection r = RasConnection.GetActiveConnectionByName(listBox1.Items[listBox1.SelectedIndex].ToString(), RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User));
+                    RasConnection r = RasConnection.GetActiveConnectionByName(detectedList.Items[detectedList.SelectedIndex].ToString(), RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User));
                     if (r == null)
                     {
                         _shouldStop = false;
@@ -154,7 +149,7 @@ namespace Win8Redialer
             try
             {
                 if (chkNoBytes.Checked)
-                    timer2.Enabled = true;
+                    checkNoBytesTimer.Enabled = true;
 
                 watcher.Connected += new EventHandler<RasConnectionEventArgs>(this.watcher_Connected);
                 watcher.Disconnected += new EventHandler<RasConnectionEventArgs>(this.watcher_Disconnected);
@@ -170,7 +165,7 @@ namespace Win8Redialer
             try
             {
                 watcher.EnableRaisingEvents = false;
-                timer2.Enabled = false;
+                checkNoBytesTimer.Enabled = false;
                 RequestStop();
             }
             catch (Exception er)
@@ -196,10 +191,10 @@ namespace Win8Redialer
                     {
                         appendLog("Connecting...");
 
-                        dialer.EntryName = listBox1.Items[listBox1.SelectedIndex].ToString();
+                        dialer.EntryName = detectedList.Items[detectedList.SelectedIndex].ToString();
                         dialer.PhoneBookPath = RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User);
 
-                        if (isPPPOE[listBox1.SelectedIndex] == 1)
+                        if (isPPPOE[detectedList.SelectedIndex] == 1)
                             dialer.Credentials = new System.Net.NetworkCredential(txtUserName.Text, txtPassword.Text);
 
                         dialer.Dial();
@@ -239,20 +234,20 @@ namespace Win8Redialer
             oThread.Start();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void detectedList_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
-                if (listBox1.SelectedIndex != -1)
+                if (detectedList.SelectedIndex != -1)
                 {
-                    RasConnection r = RasConnection.GetActiveConnectionByName(listBox1.Items[listBox1.SelectedIndex].ToString(), RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User));
+                    RasConnection r = RasConnection.GetActiveConnectionByName(detectedList.Items[detectedList.SelectedIndex].ToString(), RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User));
                     if (r == null)
                         appendLog("Current Status:Disconnected");
                     else
                         appendLog("Current Status:" + r.GetConnectionStatus().ConnectionState);
 
-                    if (button1.Enabled == false)
-                        button1.Enabled = true;
+                    if (startButton.Enabled == false)
+                        startButton.Enabled = true;
                 }
             }
             catch (Exception er)
@@ -262,41 +257,41 @@ namespace Win8Redialer
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void stopButton_Click(object sender, EventArgs e)
         {
             appendLog("Win8 Redialer Stopped...");
-            button1.Enabled = true;
-            button2.Enabled = false;
+            startButton.Enabled = true;
+            stopButton.Enabled = false;
             Stop();
         }
 
-        private void Form1_Resize(object sender, EventArgs e)
+        private void MainForm_Resize(object sender, EventArgs e)
         {
 
             if (FormWindowState.Minimized == this.WindowState)
             {
-                notifyIcon1.Visible = true;
-                notifyIcon1.ShowBalloonTip(500);
+                notifyIcon.Visible = true;
+                notifyIcon.ShowBalloonTip(500);
                 this.Hide();
             }
             else if (FormWindowState.Normal == this.WindowState)
             {
-                notifyIcon1.Visible = false;
+                notifyIcon.Visible = false;
             }
 
         }
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void checkNoBytesTimer_Tick(object sender, EventArgs e)
         {
             if (chkNoBytes.Checked == true)
             {
-                RasConnection r = RasConnection.GetActiveConnectionByName(listBox1.Items[listBox1.SelectedIndex].ToString(), RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User));
+                RasConnection r = RasConnection.GetActiveConnectionByName(detectedList.Items[detectedList.SelectedIndex].ToString(), RasPhoneBook.GetPhoneBookPath(RasPhoneBookType.User));
                 if (r != null)
                 {
                     using (TcpClient tcp = new TcpClient())
@@ -328,7 +323,7 @@ namespace Win8Redialer
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void aboutButton_Click(object sender, EventArgs e)
         {
             //MessageBox.Show("Created By: Ankit Sharma" + Environment.NewLine + "Download available at: http://www.ankitsharma.info" + Environment.NewLine + "For your suggestions & bug reports email at ankit@ankitsharma.info", "About Win8 Redialer", MessageBoxButtons.OK);
             About about = new About();
@@ -364,18 +359,12 @@ namespace Win8Redialer
             PersistentSettings.Instance.Save();
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void saveButton_Click(object sender, EventArgs e)
         {
             PersistentSettings.Instance.SetValue("Username", txtUserName.Text);
             PersistentSettings.Instance.SetValue("Password", txtPassword.Text);
             PersistentSettings.Instance.Save();
             MessageBox.Show("Saved!");
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            checkUpdate();
-            timer1.Enabled = false;
         }
 
         private void chkHosted_CheckedChanged(object sender, EventArgs e)
@@ -384,7 +373,7 @@ namespace Win8Redialer
             PersistentSettings.Instance.Save();
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             var result = MessageBox.Show("Are you sure you want to exit the application?", "Exit Win8 Redialer?",
                              MessageBoxButtons.YesNo,

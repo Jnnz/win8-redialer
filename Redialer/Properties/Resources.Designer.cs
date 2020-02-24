@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Win8Redialer.Properties {
+namespace Redialer.Properties {
     using System;
     
     
