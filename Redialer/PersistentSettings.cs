@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Xml;
 using System.Reflection;
 
-namespace Win8Redialer {
+namespace Redialer {
 
   public class PersistentSettings {
 

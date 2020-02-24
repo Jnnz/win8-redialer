@@ -7,7 +7,7 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using System.Threading;
 
-namespace Win8Redialer
+namespace Redialer
 {
     public partial class MainForm : Form
     {

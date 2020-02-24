@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-namespace Win8Redialer
+namespace Redialer
 {
     public partial class About : Form
     {

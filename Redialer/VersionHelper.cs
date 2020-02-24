@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
-namespace Win8Redialer
+namespace Redialer
 {
     class VersionHelper
     {

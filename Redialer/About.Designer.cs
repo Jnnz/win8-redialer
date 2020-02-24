@@ -1,4 +1,4 @@
-﻿namespace Win8Redialer
+﻿namespace Redialer
 {
     partial class About
     {
